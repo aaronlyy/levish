@@ -2,13 +2,13 @@ from distutils.core import setup
 setup(
   name = 'levish',
   packages = ['levish'],
-  version = '0.1.2',
+  version = '0.1.4',
   license='MIT',
   description = 'Create your own shell',
   author = 'Aaron Levi Can (aaronlyy)',
   author_email = 'aaronlevican@gmail.com',
   url = 'https://github.com/aaronlyy/levish',
-  download_url = 'https://github.com/aaronlyy/levish/archive/v_012.tar.gz',
+  download_url = 'https://github.com/aaronlyy/levish/archive/v_014.tar.gz',
   keywords = ['shell', 'terminal', 'commands', 'cmd', 'console'],
   install_requires=[
         "pyfiglet"

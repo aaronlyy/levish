@@ -48,7 +48,6 @@ class Shell:
                 print("")
             else:
                 # continue loop if inp == 0
-                self.stop()
                 continue
     # -------------------------
 
@@ -70,7 +69,7 @@ class Shell:
     # ------------------------------
 
     # --- break loop ---
-    def stop(self):
+    def _break_loop(self):
         '''
         break out of main loop
         '''
@@ -92,6 +91,9 @@ class Shell:
     
     def _cmd_clear(self, args):
         os.system("clear")
+
+    def _cmd_exit(self, args):
+        self._break_loop()
     # ------------------------------
     
 
@@ -113,6 +115,7 @@ class Shell:
         self.add_command("help", self._cmd_help, "shows help")
         self.add_command("cls", self._cmd_cls, "clears the screen (windows)")
         self.add_command("clear", self._cmd_clear, "clears the screen (unix)")
+        self.add_command("exit", self._cmd_exit, "exit shell")
         # create help string
         self._build_help()
         # splash
@@ -134,4 +137,13 @@ class CommandAlreadyExistError(Exception):
 
 if __name__ == "__main__":
     sh = Shell("levish", show_cwd=True, figlet=True, figlet_font="3-d")
+    
+    def test(args):
+        pass
+    def test2(args):
+        pass
+
+    sh.add_command("test", test)
+    sh.add_command("test", test2)
+
     sh.run()
