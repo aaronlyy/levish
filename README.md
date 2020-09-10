@@ -1,4 +1,4 @@
-# levish: Create your own shell 🐢
+# levish: Create your own Shell 🐢
 
 ## Installation
 
