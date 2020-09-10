@@ -5,17 +5,20 @@ Version: 0.1.1
 '''
 
 import os
+from pyfiglet import figlet_format
 
 class Shell:
     '''
     Create new Shell object
     '''
-    def __init__(self, name, show_cwd=False, prefix="[>] "):
+    def __init__(self, name, show_cwd=False, prefix="[>] ", figlet=False, figlet_font="standard"):
         self._name = name
         self._show_cwd = show_cwd
         self._prefix = prefix
         self._commands = {}
         self._help = "COMMAND: DESCRIPTION"
+        self._figlet = figlet
+        self._figlet_font = figlet_font
 
     # --- main loop function ---
     def _loop(self):
@@ -102,6 +105,9 @@ class Shell:
         self.add_command("clear", self._cmd_clear, "clears the screen (unix)")
         # create help string
         self._build_help()
+        # splash
+        if self._figlet:
+            print(figlet_format(self._name, self._figlet_font))
         # start main loop
         self._loop()
     # ------------------
@@ -117,5 +123,5 @@ class CommandAlreadyExistError(Exception):
 
 
 if __name__ == "__main__":
-    sh = Shell("hi", True,)
+    sh = Shell("levish", show_cwd=True, figlet=True, figlet_font="3-d")
     sh.run()
