@@ -1,7 +1,7 @@
 '''
 Author: Aaron Levi (aaronlyy)
 Description: levish lets you create your own shell with custom commands.
-Version: 0.1
+Version: 0.1.1
 '''
 
 import os
