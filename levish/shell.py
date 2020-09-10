@@ -19,13 +19,14 @@ class Shell:
         self._help = "COMMAND: DESCRIPTION"
         self._figlet = figlet
         self._figlet_font = figlet_font
+        self._looping = True
 
     # --- main loop function ---
     def _loop(self):
         '''
         main loop waiting for input angel du geile sau
         '''
-        while True:
+        while self._looping:
             if self._show_cwd:
                 inp = input(f"{os.getcwd()} {self._prefix}")
             else:
@@ -47,6 +48,7 @@ class Shell:
                 print("")
             else:
                 # continue loop if inp == 0
+                self.stop()
                 continue
     # -------------------------
 
@@ -66,6 +68,14 @@ class Shell:
         else:
             raise CommandAlreadyExistError(cmd)
     # ------------------------------
+
+    # --- break loop ---
+    def stop(self):
+        '''
+        break out of main loop
+        '''
+        self._looping = False
+    # --------------------
 
     # --- build help function ---
     def _build_help(self):
