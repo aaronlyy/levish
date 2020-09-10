@@ -2,7 +2,7 @@
 
 ## Installation
 
-Install levish using PIP:
+Install levish using pip:
 
 ```txt
 pip install levish
