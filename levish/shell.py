@@ -10,8 +10,9 @@ class Shell:
     '''
     Create new Shell object
     '''
-    def __init__(self, name, prefix="[>] "):
+    def __init__(self, name, show_cwd=False, prefix="[>] "):
         self._name = name
+        self._show_cwd = show_cwd
         self._prefix = prefix
         self._commands = {}
         self._help = "COMMAND: DESCRIPTION"
@@ -19,10 +20,13 @@ class Shell:
     # --- main loop function ---
     def _loop(self):
         '''
-        main loop waiting for input
+        main loop waiting for input angel du geile sau
         '''
         while True:
-            inp = input(self._prefix)
+            if self._show_cwd:
+                inp = input(f"{os.getcwd()} {self._prefix}")
+            else:
+                inp = input(self._prefix)
 
             # test if input is longer than 0 else continue loop
             if (len(inp)) > 0:
@@ -37,6 +41,7 @@ class Shell:
                 else:
                     # print not found error
                     self._msg_not_found(cmd)
+                print("")
             else:
                 # continue loop if inp == 0
                 continue
@@ -92,12 +97,11 @@ class Shell:
         Start the shell
         '''
         # adding internal commands
-        self.add_command(".help", self._cmd_help, "shows help")
-        self.add_command(".cls", self._cmd_cls, "clears the screen (windows)")
-        self.add_command(".clear", self._cmd_clear, "clears the screen (unix)")
+        self.add_command("help", self._cmd_help, "shows help")
+        self.add_command("cls", self._cmd_cls, "clears the screen (windows)")
+        self.add_command("clear", self._cmd_clear, "clears the screen (unix)")
         # create help string
         self._build_help()
-        # test for errors
         # start main loop
         self._loop()
     # ------------------
@@ -110,3 +114,8 @@ class CommandAlreadyExistError(Exception):
     def __str__(self):
         return self.message
 # ------------------------
+
+
+if __name__ == "__main__":
+    sh = Shell("hi", True,)
+    sh.run()
