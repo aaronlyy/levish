@@ -5,7 +5,12 @@ Version: 0.1.1
 '''
 
 import os
+from inspect import getfullargspec
+
 from pyfiglet import figlet_format
+
+
+# TODO add system command functionality
 
 class Shell:
     '''
@@ -16,7 +21,7 @@ class Shell:
         self._show_cwd = show_cwd
         self._prefix = prefix
         self._commands = {}
-        self._help = "COMMAND: DESCRIPTION"
+        self._help = ""
         self._figlet = figlet
         self._figlet_font = figlet_font
         self._looping = True
@@ -28,7 +33,7 @@ class Shell:
         '''
         while self._looping:
             if self._show_cwd:
-                inp = input(f"{os.getcwd()} {self._prefix}")
+                inp = input(f"{self._name}@{os.getcwd()} {self._prefix}")
             else:
                 inp = input(self._prefix)
 
@@ -44,7 +49,7 @@ class Shell:
                     self._commands[cmd]["func"](args)
                 else:
                     # print not found error
-                    self._msg_not_found(cmd)
+                    print(f"Command '{cmd}' does not exist. Try 'help'")
                 print("")
             else:
                 # continue loop if inp == 0
@@ -52,7 +57,7 @@ class Shell:
     # -------------------------
 
     # --- add function to object ---
-    def add_command(self, cmd, function, description=""):
+    def add_command(self, cmd, function, description="no description"):
         '''
         Add a new command to the shell.\n
         Args:
@@ -60,12 +65,21 @@ class Shell:
             function (function): the function that is executed on command call
             description (str) [opt]: command description 
         '''
-        # TODO check if function takes args
-        # check if function does not already exist
-        if not cmd in self._commands:
-            self._commands[cmd] = {"func": function, "desc": description}
+        # check for naming
+        # check if passed in function is really a function
+        if callable(function):
+            # check if function takes 1 argument called args
+            if "args" in getfullargspec(function).args:
+                # check if function does not already exist
+                if not cmd in self._commands:
+                    self._commands[cmd] = {"func": function, "desc": description}
+                else:
+                    raise CommandAlreadyExistError(cmd)
+            else:
+                raise MissingArgsInFunctionError(cmd)
         else:
-            raise CommandAlreadyExistError(cmd)
+            # raise function not callable error
+            raise FunctionNotCallableError(cmd)
     # ------------------------------
 
     # --- break loop ---
@@ -78,13 +92,22 @@ class Shell:
 
     # --- build help function ---
     def _build_help(self):
+        self._help = "------------------------\nCOMMAND: DESCRIPTION"
         for cmd in self._commands:
             self._help += f"\n{cmd}: {self._commands[cmd]['desc']}"
+        self._help += "\n------------------------"
     # ---------------------------
 
     # --- internal commands ---
     def _cmd_help(self, args):
-        print(self._help)
+        if len(args) > 0:
+            if args[0] in self._commands:
+                print(self._commands[args[0]]["desc"])
+            else:
+                print(f"Command '{args[0]}' not found")
+        else:
+            print(self._help)
+
 
     def _cmd_cls(self, args):
         os.system("cls")
@@ -94,28 +117,24 @@ class Shell:
 
     def _cmd_exit(self, args):
         self._break_loop()
-    # ------------------------------
     
 
-    # --- internal error messages ---
-    def _msg_not_found(self, cmd):
+    def enable_basic_commands(self):
         '''
-        print command not found error
+        This adds basic commands like 'cls/clear' & 'exit' to the shell
         '''
-        print(f"Command '{cmd}' does not exist. Try '.help'")
-    # ---------------------
-                
+        self.add_command("cls", self._cmd_cls, "Clears the screen (windows)")
+        self.add_command("clear", self._cmd_clear, "Clears the screen (unix)")
+        self.add_command("exit", self._cmd_exit, "Exit the shell")
+    # ------------------------------
 
+    
     # --- run function ---
     def run(self):
         '''
         Start the shell
         '''
-        # adding internal commands
-        self.add_command("help", self._cmd_help, "shows help")
-        self.add_command("cls", self._cmd_cls, "clears the screen (windows)")
-        self.add_command("clear", self._cmd_clear, "clears the screen (unix)")
-        self.add_command("exit", self._cmd_exit, "exit shell")
+        self.add_command("help", self._cmd_help, "Shows help")
         # create help string
         self._build_help()
         # splash
@@ -132,18 +151,29 @@ class CommandAlreadyExistError(Exception):
 
     def __str__(self):
         return self.message
+
+class MissingArgsInFunctionError(Exception):
+    def __init__(self, cmd):
+        self.message = f"'{cmd}': Function must take 1 argument called args."
+
+    def __str__(self):
+        return self.message
+
+class FunctionNotCallableError(Exception):
+    def __init__(self, cmd):
+        self.message = f"'{cmd}': The passed in function is not a callable object."
+
+    def __str__(self):
+        return self.message
 # ------------------------
 
 
 if __name__ == "__main__":
-    sh = Shell("levish", show_cwd=True, figlet=True, figlet_font="3-d")
-    
+
     def test(args):
-        pass
-    def test2(args):
-        pass
-
+        print("test function")
+    
+    sh = Shell("levish", show_cwd=True, figlet=True, figlet_font="slant")
+    sh.enable_basic_commands()
     sh.add_command("test", test)
-    sh.add_command("test", test2)
-
     sh.run()
