@@ -10,12 +10,10 @@ from inspect import getfullargspec
 from pyfiglet import figlet_format
 
 
-# TODO add system command functionality
+# TODO add system command functionality {}
 
 class Shell:
-    '''
-    Create new Shell object
-    '''
+    """Creates a new Shell object"""
     def __init__(self, name, show_cwd=False, prefix="[>] ", figlet=False, figlet_font="standard"):
         self._name = name
         self._show_cwd = show_cwd
@@ -28,9 +26,7 @@ class Shell:
 
     # --- main loop function ---
     def _loop(self):
-        '''
-        main loop waiting for input angel du geile sau
-        '''
+        """Main loop waiting for input and executing functions."""
         while self._looping:
             if self._show_cwd:
                 inp = input(f"{self._name}@{os.getcwd()} {self._prefix}")
@@ -58,13 +54,18 @@ class Shell:
 
     # --- add function to object ---
     def add_command(self, cmd, function, description="no description"):
-        '''
-        Add a new command to the shell.\n
+        """Add a new command to the Shell
+
         Args:
-            cmd (str): the commands
-            function (function): the function that is executed on command call
-            description (str) [opt]: command description 
-        '''
+            cmd (str): command that executes the function
+            function (function): functions that is executed when command is typed
+            description (str, optional): Defaults to "no description".
+
+        Raises:
+            CommandAlreadyExistError: Raised when a command is added that already exist in command dict.
+            MissingArgsInFunctionError: Raised when added command function has no parameter called args.
+            FunctionNotCallableError: Raised when added command function is not actually a function.
+        """
         # check for naming
         # check if passed in function is really a function
         if callable(function):
@@ -84,14 +85,13 @@ class Shell:
 
     # --- break loop ---
     def _break_loop(self):
-        '''
-        break out of main loop
-        '''
+        """Break out of _loop by setting self._looping to False."""
         self._looping = False
     # --------------------
 
     # --- build help function ---
     def _build_help(self):
+        """Builds the help string that is displayed when the 'help' command is executed."""
         self._help = "------------------------\nCOMMAND: DESCRIPTION"
         for cmd in self._commands:
             self._help += f"\n{cmd}: {self._commands[cmd]['desc']}"
@@ -119,10 +119,8 @@ class Shell:
         self._break_loop()
     
 
-    def enable_basic_commands(self):
-        '''
-        This adds basic commands like 'cls/clear' & 'exit' to the shell
-        '''
+    def add_basic_commands(self):
+        """This adds basic commands like 'cls/clear' & 'exit' to the shell"""
         self.add_command("cls", self._cmd_cls, "Clears the screen (windows)")
         self.add_command("clear", self._cmd_clear, "Clears the screen (unix)")
         self.add_command("exit", self._cmd_exit, "Exit the shell")
@@ -131,9 +129,7 @@ class Shell:
     
     # --- run function ---
     def run(self):
-        '''
-        Start the shell
-        '''
+        """Initialize the Shell and run self._loop"""
         self.add_command("help", self._cmd_help, "Shows help")
         # create help string
         self._build_help()
@@ -174,6 +170,6 @@ if __name__ == "__main__":
         print("test function")
     
     sh = Shell("levish", show_cwd=True, figlet=True, figlet_font="slant")
-    sh.enable_basic_commands()
+    sh.add_basic_commands()
     sh.add_command("test", test)
     sh.run()
