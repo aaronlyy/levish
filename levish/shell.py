@@ -1,9 +1,3 @@
-'''
-Author: Aaron Levi (aaronlyy)
-Description: levish lets you create your own shell with custom commands.
-Version: 0.1.1
-'''
-
 import os
 from inspect import getfullargspec
 
@@ -11,6 +5,12 @@ from pyfiglet import figlet_format
 
 
 # TODO add system command functionality {}
+
+
+
+#* ------------------------
+#* --- Main Shell class ---
+#* ------------------------
 
 class Shell:
     """Creates a new Shell object"""
@@ -24,7 +24,12 @@ class Shell:
         self._figlet_font = figlet_font
         self._looping = True
 
-    # --- main loop function ---
+
+
+    #* ---------------------
+    #* --- loop function ---
+    #* ---------------------
+
     def _loop(self):
         """Main loop waiting for input and executing functions."""
         while self._looping:
@@ -50,9 +55,13 @@ class Shell:
             else:
                 # continue loop if inp == 0
                 continue
-    # -------------------------
 
-    # --- add function to object ---
+
+
+    #* ----------------------------
+    #* --- add command function ---
+    #* ----------------------------
+
     def add_command(self, cmd, function, description="no description"):
         """Add a new command to the Shell
 
@@ -81,24 +90,30 @@ class Shell:
         else:
             # raise function not callable error
             raise FunctionNotCallableError(cmd)
-    # ------------------------------
 
-    # --- break loop ---
+
+
+    #* --------------------------------------
+    #* --- other internal functions start ---
+    #* --------------------------------------
+
     def _break_loop(self):
         """Break out of _loop by setting self._looping to False."""
         self._looping = False
-    # --------------------
 
-    # --- build help function ---
     def _build_help(self):
         """Builds the help string that is displayed when the 'help' command is executed."""
         self._help = "------------------------\nCOMMAND: DESCRIPTION"
         for cmd in self._commands:
             self._help += f"\n{cmd}: {self._commands[cmd]['desc']}"
         self._help += "\n------------------------"
-    # ---------------------------
 
-    # --- internal commands ---
+
+
+    #* ----------------------
+    #* --- basic commands ---
+    #* ----------------------
+
     def _cmd_help(self, args):
         if len(args) > 0:
             if args[0] in self._commands:
@@ -108,7 +123,6 @@ class Shell:
         else:
             print(self._help)
 
-
     def _cmd_cls(self, args):
         os.system("cls")
     
@@ -117,17 +131,26 @@ class Shell:
 
     def _cmd_exit(self, args):
         self._break_loop()
-    
+
+
+
+
+    #* -----------------------------------
+    #* --- add basic commands function ---
+    #* -----------------------------------
 
     def add_basic_commands(self):
         """This adds basic commands like 'cls/clear' & 'exit' to the shell"""
         self.add_command("cls", self._cmd_cls, "Clears the screen (windows)")
         self.add_command("clear", self._cmd_clear, "Clears the screen (unix)")
         self.add_command("exit", self._cmd_exit, "Exit the shell")
-    # ------------------------------
 
-    
-    # --- run function ---
+
+
+    #* --------------------
+    #* --- run function ---
+    #* --------------------
+
     def run(self):
         """Initialize the Shell and run self._loop"""
         self.add_command("help", self._cmd_help, "Shows help")
@@ -138,9 +161,13 @@ class Shell:
             print(figlet_format(self._name, self._figlet_font))
         # start main loop
         self._loop()
-    # ------------------
 
-# --- exception classes ---
+
+
+    #* -------------------------
+    #* --- custom exceptions ---
+    #* -------------------------
+
 class CommandAlreadyExistError(Exception):
     def __init__(self, cmd):
         self.message = f"'{cmd}': This command already exists."
@@ -161,15 +188,3 @@ class FunctionNotCallableError(Exception):
 
     def __str__(self):
         return self.message
-# ------------------------
-
-
-if __name__ == "__main__":
-
-    def test(args):
-        print("test function")
-    
-    sh = Shell("levish", show_cwd=True, figlet=True, figlet_font="slant")
-    sh.add_basic_commands()
-    sh.add_command("test", test)
-    sh.run()
