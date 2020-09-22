@@ -4,7 +4,8 @@ from inspect import getfullargspec
 from pyfiglet import figlet_format
 
 
-# TODO add system command functionality {}
+# TODO add system command functionality
+# TODO add some more basic commands (ls, cd, mkdir, rm, etc)
 
 
 
@@ -13,7 +14,15 @@ from pyfiglet import figlet_format
 #* ------------------------
 
 class Shell:
-    """Creates a new Shell object"""
+    """Creates a new Shell object
+    
+    Args:
+        name (str): Name of the shell.
+        show_cwd (bool, optional): Add current working directory to prefix, defaults to "False"
+        prefix (str, optional): Shell prefix, defaults to "[>]"
+        figlet (bool, optional): Enable figlet print on first start, defaults to "False"
+        figlet_font (str, optional): Change figlet font, defaults to "standard"
+    """
     def __init__(self, name, show_cwd=False, prefix="[>] ", figlet=False, figlet_font="standard"):
         self._name = name
         self._show_cwd = show_cwd
@@ -31,7 +40,10 @@ class Shell:
     #* ---------------------
 
     def _loop(self):
-        """Main loop waiting for input and executing functions."""
+        """Main loop waiting for input and executing functions.
+
+        Loop can be exited by calling "_break_loop()"
+        """
         while self._looping:
             if self._show_cwd:
                 inp = input(f"{self._name}@{os.getcwd()} {self._prefix}")
@@ -62,7 +74,7 @@ class Shell:
     #* --- add command function ---
     #* ----------------------------
 
-    def add_command(self, cmd, function, description="no description"):
+    def add_command(self, cmd: "str", function: "func", description: "str"="no description"):
         """Add a new command to the Shell
 
         Args:
@@ -75,21 +87,27 @@ class Shell:
             MissingArgsInFunctionError: Raised when added command function has no parameter called args.
             FunctionNotCallableError: Raised when added command function is not actually a function.
         """
-        # check for naming
         # check if passed in function is really a function
         if callable(function):
             # check if function takes 1 argument called args
             if "args" in getfullargspec(function).args:
-                # check if function does not already exist
                 if not cmd in self._commands:
-                    self._commands[cmd] = {"func": function, "desc": description}
+                    self._commands[cmd] = {
+                        "func": function,
+                        "desc": description
+                    }
                 else:
                     raise CommandAlreadyExistError(cmd)
             else:
                 raise MissingArgsInFunctionError(cmd)
         else:
-            # raise function not callable error
             raise FunctionNotCallableError(cmd)
+
+
+    def command(self, function: "function"):
+        """add_command but as decorator
+        """
+        self.add_command(function.__name__, function, f"{function.__doc__.strip()}")
 
 
 
