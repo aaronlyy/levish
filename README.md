@@ -1,3 +1,5 @@
+![header](media/header.png)
+
 # levish: Create your own Shell 🐢
 
 ## Installation
