@@ -12,15 +12,11 @@ pip install levish
 
 ## Get started
 
-Using levish is very easy. We start by importing the 'Shell' class.
+Using levish is very easy. We start by importing the 'Shell' class and creating a new Shell object.
 
 ```python
 from levish import Shell
-```
 
-Now we can make a new Shell by creating an object of 'Shell' and giving it an name.
-
-```python
 sh = Shell("MyShell")
 ```
 
