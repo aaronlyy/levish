@@ -50,5 +50,5 @@ sh.run()
 
 ```txt
 [>] hello
-hello friend!
+hello!
 ```
