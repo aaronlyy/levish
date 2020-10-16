@@ -33,6 +33,9 @@ class Shell:
         self._figlet_font = figlet_font
         self._looping = True
 
+        self.add_command("help", self._cmd_help, "Shows help")
+        self.add_command("exit", self._cmd_exit, description="Leave the shell")
+
 
 
     #* ---------------------
@@ -128,9 +131,9 @@ class Shell:
 
 
 
-    #* ----------------------
-    #* --- basic commands ---
-    #* ----------------------
+    #* -------------------------
+    #* --- internal commands ---
+    #* -------------------------
 
     def _cmd_help(self, args):
         if len(args) > 0:
@@ -141,29 +144,8 @@ class Shell:
         else:
             print(self._help)
 
-    def _cmd_cls(self, args):
-        os.system("cls")
-    
-    def _cmd_clear(self, args):
-        os.system("clear")
-
     def _cmd_exit(self, args):
         self._break_loop()
-
-
-
-
-    #* -----------------------------------
-    #* --- add basic commands function ---
-    #* -----------------------------------
-
-    def add_basic_commands(self):
-        """This adds basic commands like 'cls/clear' & 'exit' to the shell"""
-        self.add_command("cls", self._cmd_cls, "Clears the screen (windows)")
-        self.add_command("clear", self._cmd_clear, "Clears the screen (unix)")
-        self.add_command("exit", self._cmd_exit, "Exit the shell")
-
-
 
     #* --------------------
     #* --- run function ---
@@ -171,10 +153,9 @@ class Shell:
 
     def run(self):
         """Initialize the Shell and run self._loop"""
-        self.add_command("help", self._cmd_help, "Shows help")
         # create help string
         self._build_help()
-        # splash
+        # splash (figlet)
         if self._figlet:
             print(figlet_format(self._name, self._figlet_font))
         # start main loop
