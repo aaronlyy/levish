@@ -10,7 +10,7 @@ Install levish using pip:
 pip install levish
 ```
 
-## Get started
+## Getting started
 
 Using levish is very easy. We start by importing the 'Shell' class and creating a new Shell object.
 
