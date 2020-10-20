@@ -39,7 +39,7 @@ from levish import Shell
 sh = Shell("MyShell")
 
 def cmd_hello(args):
-    print("hello!)
+    print("hello!")
 
 sh.add_command("hello", hello, description="this command prints hello!")
 
