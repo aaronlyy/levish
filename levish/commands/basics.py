@@ -20,6 +20,13 @@ def ls(args):
             else:
                 print(f"{i} .")
     elif len(args) == 1:
-        pass
+        if _isdir(args[0]):
+            for i in _listdir():
+                if _isdir(_join(_getcwd(), i)):
+                    print(f"{i} ..")
+                else:
+                    print(f"{i} .")
+        else:
+            print("Directory not found")
     else:
         print("Too much arguments")
