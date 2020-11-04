@@ -1,10 +1,17 @@
-from distutils.core import setup
+from setuptools import setup
+
+with open("README.md", "r") as f:
+  _long_description = f.read()
+
+
 setup(
   name = 'levish',
   packages = ['levish', 'levish.commands'],
-  version = '0.1.7.2',
+  version = '0.1.7.3',
   license='MIT',
   description = 'Create your own shell.',
+  long_description = _long_description,
+  long_description_content_type='text/markdown',
   author = 'Aaron Levi Can (aaronlyy)',
   author_email = 'aaronlevican@gmail.com',
   url = 'https://github.com/aaronlyy/levish',
@@ -13,13 +20,4 @@ setup(
   install_requires=[
         "pyfiglet"
       ],
-  classifiers=[
-    'Development Status :: 3 - Alpha',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
-    'Intended Audience :: Developers',      # Define that your audience are developers
-    'Topic :: Software Development :: Build Tools',
-    'License :: OSI Approved :: MIT License',   # Again, pick a license
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
-  ],
 )
