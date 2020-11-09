@@ -107,13 +107,6 @@ class Shell:
             raise FunctionNotCallableError(cmd)
 
 
-    def command(self, function: "function"):
-        """add_command but as decorator
-        """
-        self.add_command(function.__name__, function, f"{function.__doc__.strip()}")
-
-
-
     #* --------------------------------------
     #* --- other internal functions start ---
     #* --------------------------------------
