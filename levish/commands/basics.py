@@ -6,13 +6,13 @@ from os.path import join as _join
 
 from platform import system as _system
 
-def clear(args):
+def clear(*args):
     if _system() == "Windows":
         _exec("cls")
     else:
         _exec("clear")
 
-def ls(args):
+def ls(*args):
     if len(args) == 0:
         for i in _listdir():
             if _isdir(_join(_getcwd(), i)):

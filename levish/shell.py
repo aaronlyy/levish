@@ -3,6 +3,7 @@ from inspect import getfullargspec
 
 from pyfiglet import figlet_format
 
+from .utils import only_varargs as _only_varargs
 
 #* ------------------------
 #* --- Main Shell class ---
@@ -28,9 +29,8 @@ class Shell:
         self._figlet_font = figlet_font
         self._looping = True
 
-        self.add_command("help", self._cmd_help, "Shows help")
-        self.add_command("exit", self._cmd_exit, description="Leave the shell")
-
+        self._add_internal_command(self._cmd_help, custom_cmd="help", description="Shows this help")
+        self._add_internal_command(self._cmd_exit, custom_cmd="exit", description="Exit the shell")
 
 
     #* ---------------------
@@ -57,7 +57,7 @@ class Shell:
                 # test if cmd is in commands dict
                 if cmd in self._commands:
                     # execute function with given args
-                    self._commands[cmd]["func"](args)
+                    self._commands[cmd]["func"](*args)
                 else:
                     # print not found error
                     print(f"Command '{cmd}' does not exist. Try 'help'")
@@ -71,24 +71,25 @@ class Shell:
     #* ----------------------------
     #* --- add command function ---
     #* ----------------------------
-
-    def add_command(self, cmd: "str", function: "func", description: "str"="no description"):
+    def add_command(self, function, custom_cmd=None, description="No description"):
         """Add a new command to the Shell
 
         Args:
-            cmd (str): command that executes the function
-            function (function): functions that is executed when command is typed
-            description (str, optional): Defaults to "no description".
+            function (function): Function that is called
+            custom_cmd (str, optional): Overwrite command that has to be typed to call function. Default command name is function.__name__
+            description (str, optional): Add a description. Defaults to "No description"
 
         Raises:
-            CommandAlreadyExistError: Raised when a command is added that already exist in command dict.
-            MissingArgsInFunctionError: Raised when added command function has no parameter called args.
-            FunctionNotCallableError: Raised when added command function is not actually a function.
+            CommandAlreadyExistError: Raised when added command already exists
+            MissingVargsInFunctionError: Raised when passed in function has no *args as argument
+            FunctionNotCallableError: Raised when passed in function is not a function
         """
-        # check if passed in function is really a function
         if callable(function):
-            # check if function takes 1 argument called args
-            if "args" in getfullargspec(function).args:
+            if _only_varargs(function, "args"):
+                if custom_cmd != None and type(custom_cmd) == str:
+                    cmd = custom_cmd
+                else:
+                    cmd = function.__name__
                 if not cmd in self._commands:
                     self._commands[cmd] = {
                         "func": function,
@@ -97,10 +98,25 @@ class Shell:
                 else:
                     raise CommandAlreadyExistError(cmd)
             else:
-                raise MissingArgsInFunctionError(cmd)
+                raise MissingVargsInFunctionError(function.__name__) # (or wrong name)
         else:
-            raise FunctionNotCallableError(cmd)
+            raise FunctionNotCallableError(function.__name__)
 
+
+    def _add_internal_command(self, function, custom_cmd, description):
+        if callable(function):
+            cmd = custom_cmd
+            if not cmd in self._commands:
+                self._commands[cmd] = {
+                    "func": function,
+                    "desc": description
+                }
+            else:
+                raise CommandAlreadyExistError(cmd)
+        else:
+            raise FunctionNotCallableError(function.__name__)
+
+    
 
     #* --------------------------------------
     #* --- other internal functions start ---
@@ -123,7 +139,7 @@ class Shell:
     #* --- internal commands ---
     #* -------------------------
 
-    def _cmd_help(self, args):
+    def _cmd_help(self, *args):
         if len(args) > 0:
             if args[0] in self._commands:
                 print(self._commands[args[0]]["desc"])
@@ -132,7 +148,7 @@ class Shell:
         else:
             print(self._help)
 
-    def _cmd_exit(self, args):
+    def _cmd_exit(self, *args):
         self._break_loop()
 
     #* --------------------
@@ -155,23 +171,26 @@ class Shell:
     #* --- custom exceptions ---
     #* -------------------------
 
-class CommandAlreadyExistError(Exception):
+class LevishError(Exception):
+    pass
+
+class CommandAlreadyExistError(LevishError):
     def __init__(self, cmd):
         self.message = f"'{cmd}': This command already exists."
 
     def __str__(self):
         return self.message
 
-class MissingArgsInFunctionError(Exception):
-    def __init__(self, cmd):
-        self.message = f"'{cmd}': Function must take 1 argument called args."
+class FunctionNotCallableError(LevishError):
+    def __init__(self, function_name):
+        self.message = f"'{function_name}': The passed in function is not a callable object."
 
     def __str__(self):
         return self.message
 
-class FunctionNotCallableError(Exception):
-    def __init__(self, cmd):
-        self.message = f"'{cmd}': The passed in function is not a callable object."
+class MissingVargsInFunctionError(LevishError):
+    def __init__(self, function_name):
+        self.message = f"'{function_name}': Missing '*args' in passed in function."
 
     def __str__(self):
         return self.message

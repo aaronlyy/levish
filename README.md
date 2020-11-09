@@ -20,13 +20,13 @@ from levish import Shell
 sh = Shell("MyShell")
 ```
 
-After that we can create our first command. We do that by first creating a function that takes one parameter called 'args'. Then we can add the function to our Shell object using the add_command() method. This method takes 3 arguments: 'cmd', 'func' & 'description' (optional). The 'cmd' parameter takes a string that we later have to type, to execute our function. The 'func' takes the name of the function that we want to execute. And well, 'description' is the description.
+After that we can create our first command. We do that by first creating a simple function. The function has to take varargs called '*args'. Then we can add the function to our Shell object using the add_command() method. Pass in our new created function and add a simple description using the 'description' argument.
 
 ```python
-def cmd_hello(args):
-    print("hello!)
+def hello(*args):
+    print("what's up?")
 
-sh.add_command("hello", hello, description="this command prints hello!")
+sh.add_command(hello, description="This command prints hello!")
 ```
 
 Now we just need to run our shell. We do that by executing the run() function of our Shell object.
@@ -38,10 +38,10 @@ from levish import Shell
 
 sh = Shell("MyShell")
 
-def cmd_hello(args):
+def cmd_hello(*args):
     print("hello!")
 
-sh.add_command("hello", hello, description="this command prints hello!")
+sh.add_command(hello, description="This command prints hello!")
 
 sh.run()
 ```
@@ -52,3 +52,5 @@ sh.run()
 [>] hello
 hello!
 ```
+
+Other examples can be found in the examples folder.
