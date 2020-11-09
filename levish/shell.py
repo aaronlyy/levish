@@ -4,11 +4,6 @@ from inspect import getfullargspec
 from pyfiglet import figlet_format
 
 
-# TODO add system command functionality
-# TODO add some more basic commands (ls, cd, mkdir, rm, etc)
-
-
-
 #* ------------------------
 #* --- Main Shell class ---
 #* ------------------------
