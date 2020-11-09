@@ -5,7 +5,7 @@ def hello(*args):
     print("what's up?")
 
 # create a new shell instance
-sh = Shell("leviSh")
+sh = Shell("leviSh", show_cwd=True)
 
 # add our defined command function
 sh.add_command(hello, description="print hello")

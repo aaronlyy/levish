@@ -31,6 +31,7 @@ class Shell:
 
         self._add_internal_command(self._cmd_help, custom_cmd="help", description="Shows this help")
         self._add_internal_command(self._cmd_exit, custom_cmd="exit", description="Exit the shell")
+        self._add_internal_command(self._cmd_about, custom_cmd="about", description="Show some info")
 
 
     #* ---------------------
@@ -150,6 +151,15 @@ class Shell:
 
     def _cmd_exit(self, *args):
         self._break_loop()
+
+    def _cmd_about(self, *args):
+        print(
+"""
+Running levish v0.1.7.3\n
+Made with love by aaronlyy
+Github: github.com/aaronlyy/levish
+"""
+)
 
     #* --------------------
     #* --- run function ---
