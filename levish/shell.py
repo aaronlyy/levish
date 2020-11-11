@@ -1,5 +1,6 @@
 import os
-from inspect import getfullargspec
+from shlex import split as _split
+
 
 from pyfiglet import figlet_format
 
@@ -54,7 +55,7 @@ class Shell:
                 # split input into cmd (first words) and args (every other word as list)
                 # keep in mind that the input function always returns a string, so the args also will be strings
                 # use int() to convert them into an integer
-                cmd, args = inp.split()[0], inp.split()[1:]
+                cmd, args = inp.split()[0], _split(inp)[1:]
                 # test if cmd is in commands dict
                 if cmd in self._commands:
                     # execute function with given args
@@ -66,8 +67,6 @@ class Shell:
             else:
                 # continue loop if inp == 0
                 continue
-
-
 
     #* ----------------------------
     #* --- add command function ---

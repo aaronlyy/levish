@@ -1,5 +1,6 @@
 from levish import Shell
 
+
 # define your command functions with a *args argument
 def hello(*args):
     print("what's up?")
