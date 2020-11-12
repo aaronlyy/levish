@@ -1,7 +1,6 @@
 import os
 from shlex import split as _split
 
-
 from pyfiglet import figlet_format
 
 from .utils import only_varargs as _only_varargs
@@ -50,23 +49,24 @@ class Shell:
             else:
                 inp = input(self._prefix)
 
-            # test if input is longer than 0 else continue loop
             if (len(inp)) > 0:
-                # split input into cmd (first words) and args (every other word as list)
-                # keep in mind that the input function always returns a string, so the args also will be strings
-                # use int() to convert them into an integer
                 cmd, args = inp.split()[0], _split(inp)[1:]
-                # test if cmd is in commands dict
                 if cmd in self._commands:
-                    # execute function with given args
-                    self._commands[cmd]["func"](*args)
+                    self._exec_command(cmd, args)
                 else:
-                    # print not found error
                     print(f"Command '{cmd}' does not exist. Try 'help'")
                 print("")
             else:
-                # continue loop if inp == 0
                 continue
+
+    def _exec_command(self, cmd, args):
+        """Execute command with given args
+
+        Args:
+            cmd (str): key
+            args (list): list of arguments
+        """
+        self._commands[cmd]["func"](*args)
 
     #* ----------------------------
     #* --- add command function ---
